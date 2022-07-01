@@ -94,7 +94,7 @@ namespace eden
          // TODO: create another global
          auto minimum_donation = globals.get().minimum_donation;
          eosio::check(!enforce_minimum || quantity >= minimum_donation,
-                      "insufficient deposit to open an account....");
+                      "insufficient deposit to open an account");
          account_tb.emplace(
              contract, [&](auto& a) { a.value = account_v0{.owner = owner, .balance = quantity}; });
       }
