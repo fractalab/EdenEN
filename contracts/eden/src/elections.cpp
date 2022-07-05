@@ -768,9 +768,9 @@ namespace eden
             members.set_rank(board_member, round, winner);
          }
       }
-      //设置首席的rank chenke
-      members.set_rank(winner, round + 1, winner);
-      //members.set_rank(winner, round, winner);
+      //修改设置首席的rank chenke
+      //members.set_rank(winner, round + 1, winner);
+      members.set_rank(winner, round, winner);
       results.set(result, contract);
 
       process_election_distribution(contract);
