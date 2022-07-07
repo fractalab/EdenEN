@@ -110,17 +110,27 @@ struct CompareFile
 TEST_CASE("budget distribution")
 {
    eden_tester t;
+   //创世成员激活
    t.genesis();
+   //给合约账号初始化金额
    t.set_balance(s2a("36.0000 EOS"));
+   t.skip_to("2020-06-01T10:29:59.500");
+   //运行选举
    t.run_election();
-
+   //执行资金分配
    t.alice.act<actions::distribute>(250);
+   //判断资金分配金额是否正确
    CHECK(t.get_total_budget() == s2a("1.8000 EOS"));
    // Skip forward to the next distribution
+   //跳到下次分配时间
    t.skip_to("2020-08-03T15:29:59.500");
+   //执行资金分配
    expect(t.alice.trace<actions::distribute>(250), "Nothing to do");
+   //
    t.chain.start_block();
+   //再次执行资金分配
    t.alice.act<actions::distribute>(250);
+   //检查
    CHECK(t.get_total_budget() == s2a("3.5100 EOS"));
    // Skip into the next election
    t.skip_to("2021-01-02T15:30:00.000");
