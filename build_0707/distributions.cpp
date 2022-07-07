@@ -25,30 +25,24 @@ namespace eden
    {
       members members{contract};
       current_distribution result{start_time, eosio::name()};
-      //"ranks": [ 28, 3, 1 ] 的意思应该是28个成员参加，第一轮3个代表，最后一轮一个主席
       auto ranks = members.stats().ranks;
-      // 除2？amount=100eos per_rank= 100/2=50
       auto per_rank = amount / (ranks.size() - 1);
       eosio::asset used{0, amount.symbol};
       uint16_t total = 0;
       for (auto iter = ranks.end() - 1, end = ranks.begin(); iter != end; --iter)
       {
-         //从1开始累加 4
          total += *iter;
          if (total > 0)
          {
-            // 如果是主席，不分配资金
             if(iter == ranks.end() - 1){
                eosio::asset initData{0, amount.symbol};
                result.rank_distribution.push_back(initData);
             }else{
                if(iter == ranks.end() - 2){
-                  //如果是首席代表，资金*2
-                  auto this_rank = per_rank * 2/ total;
+                  auto this_rank = per_rank * 2 / total;
                   used += this_rank * total;
                   result.rank_distribution.push_back(this_rank);
                }else{
-                  //其他类型代表资金不变
                   auto this_rank = per_rank / total;
                   used += this_rank * total;
                   result.rank_distribution.push_back(this_rank);
@@ -260,13 +254,10 @@ namespace eden
       auto end = table.end();
       for (; max_steps > 0 && iter != end; ++iter, --max_steps)
       {
-         //首席判断这个成员是主席 判断条件:representative = account
-         //如果是主席
          eosio::check(iter->election_rank() <= dist.rank_distribution.size(),
                       "Invariant failure: rank too high");
          for (uint8_t rank = 0; rank < iter->election_rank(); ++rank)
          {
-            //取第一轮的代表金额，如果是主席：rank
             auto amount = dist.rank_distribution[rank];
             dist_accounts_tb.emplace(contract, [&](auto& row) {
                auto fund = distribution_account_v0{.id = dist_accounts_tb.available_primary_key(),
@@ -306,7 +297,7 @@ namespace eden
       }
       return max_steps;
    }
-   //max_steps 250
+
    uint32_t distribute_monthly(eosio::name contract, uint32_t max_steps)
    {
       if (max_steps > 0)
