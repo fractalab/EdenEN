@@ -953,6 +953,13 @@ TEST_CASE("budget distribution")
    t.skip_to("2021-01-02T15:30:00.000");
    t.alice.act<actions::distribute>(1);
    t.alice.act<actions::distribute>(5000);
+   eosio::print("-------- >>>>>> \n");
+   auto ranks = members("eden.gm"_n).stats().ranks;
+   for (auto iter = ranks.end() - 1, end = ranks.begin(); iter != end; --iter)
+   {
+      eosio::print(*iter);
+   }
+   
    CHECK(t.get_total_budget() == s2a("10.9435 EOS"));
 
    expect(t.alice.trace<actions::fundtransfer>("alice"_n, s2t("2020-07-04T15:30:00.000"), 1,
